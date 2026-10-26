@@ -1,4 +1,5 @@
 const STORAGE_KEY = "readingList.books";
+const MAX_TITLE_WORDS = 60;
 let books = loadBooks();
 let currentFilter = "all";
 
@@ -19,6 +20,43 @@ function saveBooks() {
   } catch (e) { /* storage unavailable: the list still works until refresh */ }
 }
 
+// ---- helpers ----
+function cleanTitle(text) {
+  return text.trim().replace(/\s+/g, " ");
+}
+
+function countWords(text) {
+  const cleaned = cleanTitle(text);
+  return cleaned ? cleaned.split(" ").length : 0;
+}
+
+// Two titles count as the same book if they match ignoring case and extra spaces
+function isDuplicate(title) {
+  const key = cleanTitle(title).toLowerCase();
+  return books.some((b) => cleanTitle(b.title).toLowerCase() === key);
+}
+
+function formatDate(iso) {
+  if (!iso) return "";
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return "";
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}
+
+function showError(message) {
+  const box = $("formError");
+  box.textContent = message;
+  box.hidden = !message;
+}
+
+function updateWordCount() {
+  const words = countWords($("title").value);
+  const hint = $("wordCount");
+  hint.textContent = `${words} / ${MAX_TITLE_WORDS} words`;
+  hint.classList.toggle("over", words > MAX_TITLE_WORDS);
+}
+
+// ---- display ----
 function render() {
   const list = $("bookList");
   list.textContent = "";
@@ -38,6 +76,14 @@ function render() {
     const author = document.createElement("small");
     author.textContent = "by " + book.author;
     info.append(title, author);
+
+    const added = formatDate(book.dateAdded);
+    if (added) {
+      const date = document.createElement("small");
+      date.className = "date";
+      date.textContent = "Added " + added;
+      info.appendChild(date);
+    }
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -59,8 +105,15 @@ function render() {
   $("empty").hidden = shown.length !== 0;
 }
 
+// ---- actions ----
 function addBook(title, author) {
-  books.push({ id: Date.now(), title: title, author: author, read: false });
+  books.push({
+    id: Date.now(),
+    title: title,
+    author: author,
+    read: false,
+    dateAdded: new Date().toISOString()
+  });
   saveBooks();
   render();
 }
@@ -78,13 +131,30 @@ function removeBook(id) {
   render();
 }
 
+$("title").addEventListener("input", () => {
+  updateWordCount();
+  showError("");
+});
+
 $("bookForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  const title = $("title").value.trim();
-  const author = $("author").value.trim();
+  const title = cleanTitle($("title").value);
+  const author = cleanTitle($("author").value);
   if (!title || !author) return;
+
+  if (countWords(title) > MAX_TITLE_WORDS) {
+    showError(`The book name is too long. Please use ${MAX_TITLE_WORDS} words or fewer.`);
+    return;
+  }
+  if (isDuplicate(title)) {
+    showError("This book is already in your list. Please use a different name.");
+    return;
+  }
+
   addBook(title, author);
+  showError("");
   e.target.reset();
+  updateWordCount();
 });
 
 document.querySelectorAll(".filter").forEach((btn) => {
@@ -95,4 +165,5 @@ document.querySelectorAll(".filter").forEach((btn) => {
   });
 });
 
+updateWordCount();
 render();

@@ -11,9 +11,11 @@
     <h1>My Book Reading List</h1>
 
     <form id="bookForm" class="form">
-      <input id="title" type="text" placeholder="Book title" maxlength="100" required>
+      <input id="title" type="text" placeholder="Book title" maxlength="1000" required>
+      <p id="wordCount" class="hint">0 / 60 words</p>
       <input id="author" type="text" placeholder="Author" maxlength="80" required>
       <button type="submit">Add Book</button>
+      <p id="formError" class="error" role="alert" hidden></p>
     </form>
 
     <div class="filters" role="group" aria-label="Filter books">

@@ -9,6 +9,9 @@ A reading list app built with HTML, CSS and JavaScript.
 ## Features
 
 - Add a book with a title and author
+- Each book shows the **date it was added**
+- Book names are limited to **60 words**, with a live word counter
+- The **same book name can't be added twice** (ignores capital letters and extra spaces)
 - Mark a book as read or unread (read books are crossed out)
 - Remove a book
 - Filter by All, To Read and Read
