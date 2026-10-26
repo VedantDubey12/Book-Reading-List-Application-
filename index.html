@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book Reading List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>My Book Reading List</h1>
+
+    <form id="bookForm" class="form">
+      <input id="title" type="text" placeholder="Book title" maxlength="100" required>
+      <input id="author" type="text" placeholder="Author" maxlength="80" required>
+      <button type="submit">Add Book</button>
+    </form>
+
+    <div class="filters" role="group" aria-label="Filter books">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="unread">To Read</button>
+      <button class="filter" data-filter="read">Read</button>
+    </div>
+
+    <p id="summary" class="summary"></p>
+    <ul id="bookList" class="list"></ul>
+    <p id="empty" class="empty" hidden>No books here yet. Add one above!</p>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
