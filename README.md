@@ -4,7 +4,7 @@ A reading list app built with HTML, CSS and JavaScript.
 
 ## Live application
 
-**Deployed link: ADD YOUR VERCEL LINK HERE after deploying**
+**Deployed link: https://readinglist-topaz.vercel.app/
 
 ## Features
 
